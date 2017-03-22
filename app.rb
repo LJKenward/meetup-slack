@@ -123,7 +123,7 @@ end
   final_thirdtime = Time.at(calc_thirdtime)
   cldr_thirdtime = final_thirdtime.localize
   get_thirdtime = "#{cldr_thirdtime.to_short_s} #{cldr_thirdtime.to_date.to_full_s}"
-
+end
   # fourth Meetup
   if @fourthresults.nil?
     get_fourthname = ""
