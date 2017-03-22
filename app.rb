@@ -34,7 +34,7 @@ end
 def generate_attachment
   @user_query = params[:text]
 if @user_query.length == 0
-  uri = "https://api.meetup.com/2/events?group_id=#{ENV["MEETUP_GROUP_ID"]}&page=2&key=#{ENV["MEETUP_API_KEY"]}"
+  uri = "https://api.meetup.com/2/events?group_id=#{ENV["MEETUP_GROUP_ID"]}&page=20&key=#{ENV["MEETUP_API_KEY"]}"
 else
   uri = "https://api.meetup.com/2/open_events?topic=#{@user_query}&zip=#{ENV["ZIP_CODE"]}&page=2&key=#{ENV["MEETUP_API_KEY"]}"
 end
