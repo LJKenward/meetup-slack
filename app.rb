@@ -20,7 +20,7 @@ begin
   puts "[LOG] #{params}"
   params[:text] = params[:text].sub(params[:trigger_word], "").strip.gsub(/:/, '')
   unless params[:token] != ENV["OUTGOING_WEBHOOK_TOKEN"]
-    response = { text: "Next Meetup mate:" }
+    response = { text: "Next Meetup:" }
     response[:attachments] = [ generate_attachment ]
     response[:username] = ENV["BOT_USERNAME"] unless ENV["BOT_USERNAME"].nil?
     response[:icon_emoji] = ENV["BOT_ICON"] unless ENV["BOT_ICON"].nil?
@@ -90,6 +90,7 @@ end
   else
     secondlocation = "No location provided"
   end
+  get_secondgroupname = @firstresults["group"]["name"]
   get_secondname = @secondresults["name"]
   get_secondurl = @secondresults["event_url"]
   raw_secondtime = @secondresults["time"].to_f / 1000
@@ -99,6 +100,7 @@ end
   cldr_secondtime = final_secondtime.localize
   get_secondtime = "#{cldr_secondtime.to_short_s} #{cldr_secondtime.to_date.to_full_s}"
 end
+
   # Third Meetup
   if @thirdresults.nil?
     get_thirdname = ""
@@ -115,6 +117,7 @@ end
   else
     thirdlocation = "No location provided"
   end
+  get_thirdgroupname = @firstresults["group"]["name"]
   get_thirdname = @thirdresults["name"]
   get_thirdurl = @thirdresults["event_url"]
   raw_thirdtime = @thirdresults["time"].to_f / 1000
@@ -124,6 +127,7 @@ end
   cldr_thirdtime = final_thirdtime.localize
   get_thirdtime = "#{cldr_thirdtime.to_short_s} #{cldr_thirdtime.to_date.to_full_s}"
 end
+
   # fourth Meetup
   if @fourthresults.nil?
     get_fourthname = ""
@@ -140,6 +144,7 @@ end
   else
     fourthlocation = "No location provided"
   end
+  get_fourthgroupname = @firstresults["group"]["name"]
   get_fourthname = @fourthresults["name"]
   get_fourthurl = @fourthresults["event_url"]
   raw_fourthtime = @fourthresults["time"].to_f / 1000
@@ -149,7 +154,11 @@ end
   cldr_fourthtime = final_fourthtime.localize
   get_fourthtime = "#{cldr_fourthtime.to_short_s} #{cldr_fourthtime.to_date.to_full_s}"
 
-  response = { title: "#{get_firstgroupname},\n#{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true }, { title: "and then:", value: "#{get_secondgroupname}\n<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false }, { title: "and then:", value: "#{get_thirdgroupname}\n<#{get_thirdurl}|#{get_thirdname}> - #{get_thirdtime}", short: false }, { title: "and then:", value: "#{get_fourthgroupname}\n<#{get_fourthurl}|#{get_fourthname}> - #{get_fourthtime}", short: false } ] }
+  response =
+    { title: "#{get_firstgroupname},\n#{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true },
+    { title: "and then:", value: "#{get_secondgroupname}\n<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false },
+    { title: "and theeen:", value: "#{get_thirdgroupname}\n<#{get_thirdurl}|#{get_thirdname}> - #{get_thirdtime}", short: false },
+    { title: "and theeeeeen:", value: "#{get_fourthgroupname}\n<#{get_fourthurl}|#{get_fourthname}> - #{get_fourthtime}", short: false } ] }
   end
 
 end
