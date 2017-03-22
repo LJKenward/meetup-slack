@@ -20,7 +20,7 @@ begin
   puts "[LOG] #{params}"
   params[:text] = params[:text].sub(params[:trigger_word], "").strip.gsub(/:/, '')
   unless params[:token] != ENV["OUTGOING_WEBHOOK_TOKEN"]
-    response = { text: "Next Meetup:" }
+    response = { text: "Next Meetup mate:" }
     response[:attachments] = [ generate_attachment ]
     response[:username] = ENV["BOT_USERNAME"] unless ENV["BOT_USERNAME"].nil?
     response[:icon_emoji] = ENV["BOT_ICON"] unless ENV["BOT_ICON"].nil?
@@ -44,6 +44,8 @@ end
   # Check for a nil response in the array
   @firstresults = JSON.parse(request.body)["results"][0]
   @secondresults = JSON.parse(request.body)["results"][1]
+  @thirdresults = JSON.parse(request.body)["results"][2]
+
 
   # First Meetup
   if @firstresults.nil?
@@ -95,7 +97,33 @@ end
   cldr_secondtime = final_secondtime.localize
   get_secondtime = "#{cldr_secondtime.to_short_s} #{cldr_secondtime.to_date.to_full_s}"
 
-  response = { title: "#{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true }, { title: "Following Meetup:", value: "<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false } ] }
+  # Third Meetup
+  if @thirdresults.nil?
+    get_thirdname = ""
+    get_thirdurl = ""
+    get_thirdtime = ""
+    thirdlocation = ""
+  else
+  # Check for venue information
+  if @thirdresults["venue"]
+    @name = @thirdresults["venue"]["name"]
+    @lat = @thirdresults["venue"]["lat"]
+    @lon = @thirdresults["venue"]["lon"]
+    thirdlocation = "<http://www.google.com/maps/place/#{@lat},#{@lon}|#{@name}>"
+  else
+    thirdlocation = "No location provided"
+  end
+  get_thirdname = @thirdresults["name"]
+  get_thirdurl = @thirdresults["event_url"]
+  raw_thirdtime = @thirdresults["time"].to_f / 1000
+  utc_thirdoffset = @thirdresults["utc_offset"].to_i / 1000
+  calc_thirdtime = raw_thirdtime + utc_thirdoffset
+  final_thirdtime = Time.at(calc_thirdtime)
+  cldr_thirdtime = final_thirdtime.localize
+  get_thirdtime = "#{cldr_thirdtime.to_short_s} #{cldr_thirdtime.to_date.to_full_s}"
+
+
+  response = { title: "#{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true }, { title: "Following Meetup:", value: "<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false },  { title: "Third Meetup:", value: "<#{get_thirdurl}|#{get_thirdname}> - #{get_thirdtime}", short: false }  ] }
   end
 
 end
