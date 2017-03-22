@@ -45,6 +45,7 @@ end
   @firstresults = JSON.parse(request.body)["results"][0]
   @secondresults = JSON.parse(request.body)["results"][1]
   @thirdresults = JSON.parse(request.body)["results"][2]
+  @fourthresults = JSON.parse(request.body)["results"][3]
 
 
   # First Meetup
@@ -123,8 +124,32 @@ end
   cldr_thirdtime = final_thirdtime.localize
   get_thirdtime = "#{cldr_thirdtime.to_short_s} #{cldr_thirdtime.to_date.to_full_s}"
 
+  # fourth Meetup
+  if @fourthresults.nil?
+    get_fourthname = ""
+    get_fourthurl = ""
+    get_fourthtime = ""
+    fourthlocation = ""
+  else
+  # Check for venue information
+  if @fourthresults["venue"]
+    @name = @fourthresults["venue"]["name"]
+    @lat = @fourthresults["venue"]["lat"]
+    @lon = @fourthresults["venue"]["lon"]
+    fourthlocation = "<http://www.google.com/maps/place/#{@lat},#{@lon}|#{@name}>"
+  else
+    fourthlocation = "No location provided"
+  end
+  get_fourthname = @fourthresults["name"]
+  get_fourthurl = @fourthresults["event_url"]
+  raw_fourthtime = @fourthresults["time"].to_f / 1000
+  utc_fourthoffset = @fourthresults["utc_offset"].to_i / 1000
+  calc_fourthtime = raw_fourthtime + utc_fourthoffset
+  final_fourthtime = Time.at(calc_fourthtime)
+  cldr_fourthtime = final_fourthtime.localize
+  get_fourthtime = "#{cldr_fourthtime.to_short_s} #{cldr_fourthtime.to_date.to_full_s}"
 
-  response = { title: "#{get_firstgroupname}, #{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true }, { title: "Following Meetup:", value: "<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false }, { title: "Third Meetup:", value: "<#{get_thirdurl}|#{get_thirdname}> - #{get_thirdtime}", short: false } ] }
+  response = { title: "#{get_firstgroupname},\n#{get_firstname}", title_link: "#{get_firsturl}", text: "#{get_firsttime}\n#{firstlocation}", fields: [ { title: "RSVPs", value: "#{get_firstrsvpcount}", short: true }, { title: "Waitlist", value: "#{get_firstwaitlistcount}", short: true }, { title: "and then:", value: "#{get_secondgroupname}\n<#{get_secondurl}|#{get_secondname}> - #{get_secondtime}", short: false }, { title: "and then:", value: "#{get_thirdgroupname}\n<#{get_thirdurl}|#{get_thirdname}> - #{get_thirdtime}", short: false }, { title: "and then:", value: "#{get_fourthgroupname}\n<#{get_fourthurl}|#{get_fourthname}> - #{get_fourthtime}", short: false } ] }
   end
 
 end
