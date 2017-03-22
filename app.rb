@@ -96,7 +96,7 @@ end
   final_secondtime = Time.at(calc_secondtime)
   cldr_secondtime = final_secondtime.localize
   get_secondtime = "#{cldr_secondtime.to_short_s} #{cldr_secondtime.to_date.to_full_s}"
-
+end
   # Third Meetup
   if @thirdresults.nil?
     get_thirdname = ""
